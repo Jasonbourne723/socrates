@@ -61,5 +61,5 @@ func Logout(c *gin.Context) {
 		response.BusinessFail(c, "登出失败")
 		return
 	}
-	response.Success(c, nil)
+	response.Success[any](c, nil)
 }

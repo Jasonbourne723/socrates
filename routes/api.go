@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/Jasonbourne723/socrates/app/controllers"
 	"github.com/Jasonbourne723/socrates/app/controllers/app"
 	"github.com/Jasonbourne723/socrates/app/controllers/common"
 	"github.com/Jasonbourne723/socrates/app/middleware"
@@ -9,6 +10,7 @@ import (
 )
 
 func SetApiGroupRoutes(router *gin.RouterGroup) {
+
 	router.POST("/auth/register", app.Register)
 	router.POST("/auth/login", app.Login)
 
@@ -17,5 +19,13 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		authRouter.POST("/auth/info", app.Info)
 		authRouter.POST("/auth/logout", app.Logout)
 		authRouter.POST("/image_upload", common.ImageUpload)
+	}
+
+	roleRouter := router.Group("").Use(middleware.Cors())
+	{
+		roleApi := &controllers.RoleApi{}
+		roleRouter.POST("/role", roleApi.Create)
+		roleRouter.DELETE("/role/:id", roleApi.Delete)
+		roleRouter.GET("/role/pagelist", roleApi.PageList)
 	}
 }
