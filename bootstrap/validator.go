@@ -1,25 +1,26 @@
 package bootstrap
 
 import (
-    "github.com/gin-gonic/gin/binding"
-    "github.com/go-playground/validator/v10"
-    "github.com/jassue/jassue-gin/utils"
-    "reflect"
-    "strings"
+	"reflect"
+	"strings"
+
+	"github.com/Jasonbourne723/socrates/utils"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func InitializeValidator() {
-    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-        // 注册自定义验证器
-        _ = v.RegisterValidation("mobile", utils.ValidateMobile)
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		// 注册自定义验证器
+		_ = v.RegisterValidation("mobile", utils.ValidateMobile)
 
-        // 注册自定义 json tag 函数
-        v.RegisterTagNameFunc(func(fld reflect.StructField) string {
-            name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-            if name == "-" {
-                return ""
-            }
-            return name
-        })
-    }
+		// 注册自定义 json tag 函数
+		v.RegisterTagNameFunc(func(fld reflect.StructField) string {
+			name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+			if name == "-" {
+				return ""
+			}
+			return name
+		})
+	}
 }
