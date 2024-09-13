@@ -20,6 +20,7 @@ type IRoleSerivce interface {
 	Create(params request.CreaeteRole) (role *response.Role, err error)
 	Delete(id int64) (err error)
 	PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Role], err error)
+	Update(params request.UpdateRole) (role *response.Role, err error)
 }
 
 func (i *RoleService) Create(params request.CreaeteRole) (role *response.Role, err error) {
@@ -43,6 +44,29 @@ func (i *RoleService) Create(params request.CreaeteRole) (role *response.Role, e
 func (i *RoleService) Delete(id int64) (err error) {
 	err = global.App.DB.Delete(&models.Role{}, id).Error
 	return err
+}
+
+func (i *RoleService) Update(params request.UpdateRole) (role *response.Role, err error) {
+	var existRole models.Role
+	result := global.App.DB.First(&existRole, params.Id)
+	if result.Error != nil {
+		return
+	}
+	if result.RowsAffected == 0 {
+		err = global.Errors.RecordNotFoundError
+		return
+	}
+
+	existRole.Code = params.Code
+	existRole.Name = params.Name
+	existRole.PermissionSpaceId = params.PermissionSpaceId
+
+	err = global.App.DB.Save(&existRole).Error
+	if err != nil {
+		return
+	}
+	role = MapToRoleResponse(&existRole)
+	return
 }
 
 func (i *RoleService) PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Role], err error) {

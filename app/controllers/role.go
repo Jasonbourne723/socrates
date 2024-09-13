@@ -35,6 +35,19 @@ func (r *RoleApi) Create(c *gin.Context) {
 	}
 }
 
+func (r *RoleApi) Update(c *gin.Context) {
+	var role request.UpdateRole
+	if err := c.ShouldBindJSON(&role); err != nil {
+		response.ValidateFail(c, request.GetErrorMsg(role, err))
+	}
+
+	if res, err := services.NewRoleService().Update(role); err != nil {
+		response.BusinessFail(c, err.Error())
+	} else {
+		response.Success(c, res)
+	}
+}
+
 func (r *RoleApi) Delete(c *gin.Context) {
 	idstr, ok := c.Params.Get("id")
 	if !ok {
