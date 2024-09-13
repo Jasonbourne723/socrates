@@ -58,5 +58,9 @@ func BusinessFail(c *gin.Context, msg string) {
 }
 
 func TokenFail(c *gin.Context) {
-	FailByError(c, global.Errors.TokenError)
+	c.JSON(http.StatusUnauthorized, Response[any]{
+		global.Errors.TokenError.ErrorCode,
+		nil,
+		"无权限操作",
+	})
 }

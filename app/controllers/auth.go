@@ -1,4 +1,4 @@
-package app
+package controllers
 
 import (
 	"github.com/Jasonbourne723/socrates/app/common/request"
@@ -8,7 +8,10 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-func Register(c *gin.Context) {
+type AuthApi struct {
+}
+
+func (a *AuthApi) Register(c *gin.Context) {
 	var form request.Register
 	if err := c.ShouldBindJSON(&form); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(form, err))
@@ -27,7 +30,7 @@ func Register(c *gin.Context) {
 	}
 }
 
-func Login(c *gin.Context) {
+func (a *AuthApi) Login(c *gin.Context) {
 	var form request.Login
 	if err := c.ShouldBindJSON(&form); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(form, err))
@@ -46,7 +49,7 @@ func Login(c *gin.Context) {
 	}
 }
 
-func Info(c *gin.Context) {
+func (a *AuthApi) Info(c *gin.Context) {
 	err, user := services.UserService.GetUserInfo(c.Keys["id"].(string))
 	if err != nil {
 		response.BusinessFail(c, err.Error())
@@ -55,7 +58,7 @@ func Info(c *gin.Context) {
 	response.Success(c, user)
 }
 
-func Logout(c *gin.Context) {
+func (a *AuthApi) Logout(c *gin.Context) {
 	err := services.JwtService.JoinBlackList(c.Keys["token"].(*jwt.Token))
 	if err != nil {
 		response.BusinessFail(c, "登出失败")

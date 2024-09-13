@@ -2,7 +2,6 @@ package routes
 
 import (
 	"github.com/Jasonbourne723/socrates/app/controllers"
-	"github.com/Jasonbourne723/socrates/app/controllers/app"
 	"github.com/Jasonbourne723/socrates/app/controllers/common"
 	"github.com/Jasonbourne723/socrates/app/middleware"
 	"github.com/Jasonbourne723/socrates/app/services"
@@ -16,17 +15,23 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 
 	})
 
-	router.POST("/auth/register", app.Register)
-	router.POST("/auth/login", app.Login)
+	authApi := &controllers.AuthApi{}
 
-	authRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName))
+	unauthRouter := router.Group("").Use(middleware.Cors())
 	{
-		authRouter.POST("/auth/info", app.Info)
-		authRouter.POST("/auth/logout", app.Logout)
+		unauthRouter.POST("/auth/register", authApi.Register)
+		unauthRouter.POST("/auth/login", authApi.Login)
+	}
+
+	authRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
+	{
+
+		authRouter.POST("/auth/info", authApi.Info)
+		authRouter.POST("/auth/logout", authApi.Logout)
 		authRouter.POST("/image_upload", common.ImageUpload)
 	}
 
-	roleRouter := router.Group("").Use(middleware.Cors())
+	roleRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
 	{
 		roleApi := &controllers.RoleApi{}
 		roleRouter.POST("/role", roleApi.Create)
@@ -35,7 +40,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		roleRouter.PUT("/role", roleApi.Update)
 	}
 
-	permissionSpaceRouter := router.Group("").Use(middleware.Cors())
+	permissionSpaceRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
 	{
 		permissionSpaceApi := &controllers.PermissionSpaceApi{}
 		permissionSpaceRouter.POST("/permission_space", permissionSpaceApi.Create)
@@ -45,7 +50,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		permissionSpaceRouter.GET("/permission_space", permissionSpaceApi.List)
 	}
 
-	organizationRouter := router.Group("").Use(middleware.Cors())
+	organizationRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
 	{
 		organizationApi := &controllers.OrganizationApi{}
 

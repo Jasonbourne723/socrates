@@ -3,7 +3,7 @@ package request
 type CreaeteRole struct {
 	Code              string `form:"code" json:"code" binding:"required"`
 	Name              string `form:"name" json:"name" binding:"required"`
-	PermissionSpaceId int64  `form:permission_space_id json:"permission_space_id" binding:"required"`
+	PermissionSpaceId int64  `form:"permission_space_id" json:"permission_space_id" binding:"required"`
 }
 
 func (dto CreaeteRole) GetMessages() ValidatorMessages {
@@ -17,7 +17,7 @@ type UpdateRole struct {
 	Id                int64  `form:"id" json:"id" binding:"required"`
 	Code              string `form:"code" json:"code" binding:"required"`
 	Name              string `form:"name" json:"name" binding:"required"`
-	PermissionSpaceId int64  `form:permission_space_id json:"permission_space_id" binding:"required"`
+	PermissionSpaceId int64  `form:"permission_space_id" json:"permission_space_id" binding:"required"`
 }
 
 func (dto UpdateRole) GetMessages() ValidatorMessages {
