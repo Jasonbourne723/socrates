@@ -69,4 +69,14 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		applicationRouter.PUT("/application", applicationApi.Update)
 		applicationRouter.GET("/application/pagelist", applicationApi.PageList)
 	}
+
+	postRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
+	{
+		postApi := &controllers.PostApi{}
+		postRouter.POST("/post", postApi.Create)
+		postRouter.DELETE("/post/:id", postApi.Delete)
+		postRouter.GET("/post", postApi.List)
+		postRouter.PUT("/post", postApi.Update)
+		postRouter.GET("/post/pagelist", postApi.PageList)
+	}
 }
