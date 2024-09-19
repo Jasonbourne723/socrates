@@ -12,6 +12,17 @@ import (
 type OrganizationApi struct {
 }
 
+
+func (p *OrganizationApi) All(c *gin.Context) {
+
+	res, err := services.NewOrganizationService().All()
+	if err != nil {
+		response.BusinessFail(c, err.Error())
+	} else {
+		response.Success(c, res)
+	}
+}
+
 func (p *OrganizationApi) List(c *gin.Context) {
 
 	res, err := services.NewOrganizationService().List()

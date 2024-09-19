@@ -33,7 +33,16 @@ func (p *PostService) PageList(pageIndex int32, pageSize int32) (pages response.
 
 	rows := []response.Post{}
 	for _, item := range Posts {
-		rows = append(rows, *MapToPostResponse(&item))
+		postOrganizations := []models.PostOrganization{}
+		err = global.App.DB.Where("post_id = ?", item.Id).Find(&postOrganizations).Error
+		if err != nil {
+			return
+		}
+		organizationIds := []int64{}
+		for _, item := range postOrganizations {
+			organizationIds = append(organizationIds, item.OrganizationId)
+		}
+		rows = append(rows, *MapToPostResponse(&item, organizationIds))
 	}
 
 	var count int64
@@ -57,7 +66,13 @@ func (p *PostService) List() (list []*response.Post, err error) {
 	}
 	list = []*response.Post{}
 	for i := range Posts {
-		entity := MapToPostResponse(&Posts[i])
+		postOrganizations := []models.PostOrganization{}
+		global.App.DB.Select("id").Where("post_id = ?", Posts[i].Id).Find(&postOrganizations)
+		organizationIds := []int64{}
+		for _, item := range postOrganizations {
+			organizationIds = append(organizationIds, item.OrganizationId)
+		}
+		entity := MapToPostResponse(&Posts[i], organizationIds)
 		list = append(list, entity)
 	}
 	//todo: organization_post
@@ -77,7 +92,14 @@ func (p *PostService) Create(req *request.CreatePost) (res *response.Post, err e
 	entity := models.Post{Name: req.Name, Code: req.Code}
 	//todo: organization_post
 	err = global.App.DB.Create(&entity).Error
-	res = MapToPostResponse(&entity)
+	if req.OrganizationIds != nil && len(req.OrganizationIds) > 0 {
+		organizationPosts := []models.PostOrganization{}
+		for _, item := range req.OrganizationIds {
+			organizationPosts = append(organizationPosts, models.PostOrganization{OrganizationId: item, PostId: entity.Id})
+		}
+		global.App.DB.Create(organizationPosts)
+	}
+	res = MapToPostResponse(&entity, req.OrganizationIds)
 	return
 }
 
@@ -94,12 +116,30 @@ func (p *PostService) Update(req *request.UpdatePost) (res *response.Post, err e
 
 	exists.Name = req.Name
 	exists.Code = req.Code
-	//todo: organization_post
 	err = global.App.DB.Save(&exists).Error
 	if err != nil {
 		return
 	}
-	res = MapToPostResponse(&exists)
+	var postOrganizations = []models.PostOrganization{}
+
+	err = global.App.DB.Where("post_id = ?", exists.Id).Find(&postOrganizations).Error
+	if err != nil {
+		return
+	}
+	if len(postOrganizations) > 0 {
+		err = global.App.DB.Delete(&postOrganizations).Error
+		if err != nil {
+			return
+		}
+	}
+	if req.OrganizationIds != nil && len(req.OrganizationIds) > 0 {
+		organizationPosts := []models.PostOrganization{}
+		for _, item := range req.OrganizationIds {
+			organizationPosts = append(organizationPosts, models.PostOrganization{OrganizationId: item, PostId: exists.Id})
+		}
+		global.App.DB.Create(organizationPosts)
+	}
+	res = MapToPostResponse(&exists, req.OrganizationIds)
 	return
 }
 
@@ -108,10 +148,11 @@ func (p *PostService) Delete(id int64) (err error) {
 	return err
 }
 
-func MapToPostResponse(m *models.Post) *response.Post {
+func MapToPostResponse(m *models.Post, organizationIds []int64) *response.Post {
 	return &response.Post{
-		Id:   m.Id,
-		Name: m.Name,
-		Code: m.Code,
+		Id:              m.Id,
+		Name:            m.Name,
+		Code:            m.Code,
+		OrganizationIds: organizationIds,
 	}
 }

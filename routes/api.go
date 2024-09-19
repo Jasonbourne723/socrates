@@ -57,6 +57,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		organizationRouter.POST("/organization", organizationApi.Create)
 		organizationRouter.DELETE("/organization/:id", organizationApi.Delete)
 		organizationRouter.GET("/organization", organizationApi.List)
+		organizationRouter.GET("/organization/all", organizationApi.All)
 		organizationRouter.PUT("/organization", organizationApi.Update)
 	}
 

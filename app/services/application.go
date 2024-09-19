@@ -7,6 +7,7 @@ import (
 	"github.com/Jasonbourne723/socrates/app/common/response"
 	"github.com/Jasonbourne723/socrates/app/models"
 	"github.com/Jasonbourne723/socrates/global"
+	"github.com/Jasonbourne723/socrates/utils"
 )
 
 type ApplicationService struct {
@@ -70,7 +71,9 @@ func (p *ApplicationService) Create(req *request.CreateApplication) (res *respon
 		return nil, global.Errors.NameDuplicateError
 	}
 	// todo： appkey/appsecret
-	entity := models.Application{Name: req.Name, Description: req.Description, CallbackUrl: req.CallbackUrl}
+	appKey, _ := utils.GenerateRandomString(8)
+	appSecret, _ := utils.GenerateRandomString(24)
+	entity := models.Application{Name: req.Name, Description: req.Description, CallbackUrl: req.CallbackUrl, AppKey: appKey, AppSecret: appSecret}
 	err = global.App.DB.Create(&entity).Error
 	res = MapToApplicationResponse(&entity)
 	return

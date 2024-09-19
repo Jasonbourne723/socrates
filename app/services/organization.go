@@ -11,7 +11,8 @@ type OrganizationService struct {
 }
 
 type IOrganizationService interface {
-	List() (list []*response.OrganizationNode, err error)
+	List() (organizationDtos []*response.Organization, err error)
+	All() (list []*response.OrganizationNode, err error)
 	Create(req *request.CreateOrganization) (res *response.Organization, err error)
 	Update(req *request.UpdateOrganization) (res *response.Organization, err error)
 	Delete(id int64) (err error)
@@ -21,7 +22,7 @@ func NewOrganizationService() IOrganizationService {
 	return &OrganizationService{}
 }
 
-func (p *OrganizationService) List() (roots []*response.OrganizationNode, err error) {
+func (p *OrganizationService) All() (roots []*response.OrganizationNode, err error) {
 	var organizations []models.Organization
 	if err = global.App.DB.Find(&organizations).Error; err != nil {
 		return
@@ -42,12 +43,24 @@ func (p *OrganizationService) List() (roots []*response.OrganizationNode, err er
 			// 如果有父节点，找到父节点并将其添加到父节点的children中
 			parent, exists := idMap[org.ParentId]
 			if exists {
-				parent.Items = append(parent.Items, *idMap[org.Id])
+				parent.Items = append(parent.Items, idMap[org.Id])
 			}
 		}
 	}
 
 	return roots, err
+}
+
+func (p *OrganizationService) List() (organizationDtos []*response.Organization, err error) {
+	var organizations []models.Organization
+	if err = global.App.DB.Find(&organizations).Error; err != nil {
+		return
+	}
+	organizationDtos = []*response.Organization{}
+	for _, ea := range organizations {
+		organizationDtos = append(organizationDtos, MapToOrganizationResponse(&ea))
+	}
+	return
 }
 
 func (p *OrganizationService) Create(req *request.CreateOrganization) (res *response.Organization, err error) {
@@ -106,9 +119,10 @@ func MapToOrganizationResponse(m *models.Organization) *response.Organization {
 
 func MapToOrganizationNodeResponse(m *models.Organization) *response.OrganizationNode {
 	return &response.OrganizationNode{
-		Id:    m.Id,
-		Name:  m.Name,
-		Code:  m.Code,
-		Items: []response.OrganizationNode{},
+		Id:       m.Id,
+		Name:     m.Name,
+		Code:     m.Code,
+		ParentId: m.ParentId,
+		Items:    []*response.OrganizationNode{},
 	}
 }
