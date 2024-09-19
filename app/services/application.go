@@ -70,7 +70,7 @@ func (p *ApplicationService) Create(req *request.CreateApplication) (res *respon
 		return nil, global.Errors.NameDuplicateError
 	}
 	// todo： appkey/appsecret
-	entity := models.Application{Name: req.Name, Description: req.Description}
+	entity := models.Application{Name: req.Name, Description: req.Description, CallbackUrl: req.CallbackUrl}
 	err = global.App.DB.Create(&entity).Error
 	res = MapToApplicationResponse(&entity)
 	return
@@ -107,6 +107,7 @@ func MapToApplicationResponse(m *models.Application) *response.Application {
 	return &response.Application{
 		Id:          m.Id,
 		Name:        m.Name,
+		Description: m.Description,
 		AppKey:      m.AppKey,
 		AppSecret:   m.AppSecret,
 		CallbackUrl: m.CallbackUrl,
