@@ -12,6 +12,7 @@ type CustomErrors struct {
 	CodeDuplicateError  CustomError
 	NameDuplicateError  CustomError
 	RecordNotFoundError CustomError
+	MobileExistedError  CustomError
 }
 
 var Errors = CustomErrors{
@@ -21,6 +22,7 @@ var Errors = CustomErrors{
 	CodeDuplicateError:  CustomError{40003, "编号重复错误"},
 	NameDuplicateError:  CustomError{40004, "名称重复错误"},
 	RecordNotFoundError: CustomError{40005, "记录未找到错误"},
+	MobileExistedError:  CustomError{40006, "手机号已存在"},
 }
 
 func (err CustomError) Error() string {

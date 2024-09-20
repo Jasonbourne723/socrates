@@ -21,6 +21,7 @@ type IRoleSerivce interface {
 	Delete(id int64) (err error)
 	PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Role], err error)
 	Update(params request.UpdateRole) (role *response.Role, err error)
+	List() (rows []response.Role, err error)
 }
 
 func (i *RoleService) Create(params request.CreaeteRole) (role *response.Role, err error) {
@@ -88,6 +89,18 @@ func (i *RoleService) PageList(pageIndex int32, pageSize int32) (pages response.
 		PageSize:   pageSize,
 		TotalCount: count,
 		TotalPage:  int64(math.Ceil(float64(count) / float64(pageSize))),
+	}
+	return
+}
+
+func (i *RoleService) List() (rows []response.Role, err error) {
+	var roles []models.Role
+	if err = global.App.DB.Find(&roles).Error; err != nil {
+		return
+	}
+	rows = []response.Role{}
+	for _, item := range roles {
+		rows = append(rows, *MapToRoleResponse(&item))
 	}
 	return
 }

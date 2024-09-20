@@ -77,3 +77,12 @@ func (r *RoleApi) PageList(c *gin.Context) {
 		response.Success(c, res)
 	}
 }
+
+func (r *RoleApi) List(c *gin.Context) {
+	res, err := services.NewRoleService().List()
+	if err != nil {
+		response.BusinessFail(c, err.Error())
+	} else {
+		response.Success(c, res)
+	}
+}

@@ -37,6 +37,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		roleRouter.POST("/role", roleApi.Create)
 		roleRouter.DELETE("/role/:id", roleApi.Delete)
 		roleRouter.GET("/role/pagelist", roleApi.PageList)
+		roleRouter.GET("/role", roleApi.List)
 		roleRouter.PUT("/role", roleApi.Update)
 	}
 
@@ -79,5 +80,15 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		postRouter.GET("/post", postApi.List)
 		postRouter.PUT("/post", postApi.Update)
 		postRouter.GET("/post/pagelist", postApi.PageList)
+	}
+
+	userRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
+	{
+		userApi := &controllers.UserApi{}
+		userRouter.POST("/user", userApi.Create)
+		userRouter.DELETE("/user/:id", userApi.Delete)
+		userRouter.GET("/user", userApi.List)
+		userRouter.PUT("/user", userApi.Update)
+		userRouter.GET("/user/pagelist", userApi.PageList)
 	}
 }
