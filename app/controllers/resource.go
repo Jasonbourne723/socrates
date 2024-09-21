@@ -80,3 +80,20 @@ func (r *ResourceApi) List(c *gin.Context) {
 		response.Success(c, res)
 	}
 }
+
+func (r *ResourceApi) GetOne(c *gin.Context) {
+	idstr, ok := c.Params.Get("id")
+	if !ok {
+		response.ValidateFail(c, "")
+		return
+	}
+	if id, err := strconv.ParseInt(idstr, 10, 64); err != nil {
+		response.BusinessFail(c, err.Error())
+	} else {
+		if res, err := services.NewResourceService().GetOne(id); err != nil {
+			response.BusinessFail(c, err.Error())
+		} else {
+			response.Success(c, res)
+		}
+	}
+}

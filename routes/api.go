@@ -100,5 +100,6 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		resourceRouter.GET("/resource", resourceApi.List)
 		resourceRouter.PUT("/resource", resourceApi.Update)
 		resourceRouter.GET("/resource/pagelist", resourceApi.PageList)
+		resourceRouter.GET("/resource/:id", resourceApi.GetOne)
 	}
 }

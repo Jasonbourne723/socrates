@@ -23,6 +23,7 @@ type IResourceSerivce interface {
 	PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Resource], err error)
 	Update(params request.UpdateResource) (err error)
 	List() (rows []response.Resource, err error)
+	GetOne(resourceId int64) (res response.Resource, err error)
 }
 
 func (i *ResourceService) PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Resource], err error) {
@@ -53,6 +54,24 @@ func (i *ResourceService) PageList(pageIndex int32, pageSize int32) (pages respo
 		TotalCount: count,
 		TotalPage:  int64(math.Ceil(float64(count) / float64(pageSize))),
 	}
+	return
+}
+
+func (i *ResourceService) GetOne(resourceId int64) (res response.Resource, err error) {
+	var resource models.Resource
+	if err = global.App.DB.First(&resource, resourceId).Error; err != nil {
+		return
+	}
+
+	resourceItems := []models.ResourceItem{}
+	if err = global.App.DB.Where("resource_id = ?", resource.Id).Find(&resourceItems).Error; err != nil {
+		return
+	}
+	resourceActions := []models.ResourceAction{}
+	if err = global.App.DB.Where("resource_id = ?", resource.Id).Find(&resourceActions).Error; err != nil {
+		return
+	}
+	res = *MapToResourceResponse(&resource, resourceItems, resourceActions)
 	return
 }
 
