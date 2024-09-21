@@ -91,4 +91,14 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		userRouter.PUT("/user", userApi.Update)
 		userRouter.GET("/user/pagelist", userApi.PageList)
 	}
+
+	resourceRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
+	{
+		resourceApi := &controllers.ResourceApi{}
+		resourceRouter.POST("/resource", resourceApi.Create)
+		resourceRouter.DELETE("/resource/:id", resourceApi.Delete)
+		resourceRouter.GET("/resource", resourceApi.List)
+		resourceRouter.PUT("/resource", resourceApi.Update)
+		resourceRouter.GET("/resource/pagelist", resourceApi.PageList)
+	}
 }

@@ -23,9 +23,10 @@ type RoleApi struct {
 // @Success 200 {object} response.Response[dto.ProjectDto]
 // @Router /role [post]
 func (r *RoleApi) Create(c *gin.Context) {
-	var role request.CreaeteRole
+	var role request.CreateRole
 	if err := c.ShouldBindJSON(&role); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(role, err))
+		return
 	}
 
 	if res, err := services.NewRoleService().Create(role); err != nil {
@@ -39,6 +40,7 @@ func (r *RoleApi) Update(c *gin.Context) {
 	var role request.UpdateRole
 	if err := c.ShouldBindJSON(&role); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(role, err))
+		return
 	}
 
 	if res, err := services.NewRoleService().Update(role); err != nil {
@@ -52,6 +54,7 @@ func (r *RoleApi) Delete(c *gin.Context) {
 	idstr, ok := c.Params.Get("id")
 	if !ok {
 		response.ValidateFail(c, "")
+		return
 	}
 	if id, err := strconv.ParseInt(idstr, 10, 64); err != nil {
 		response.BusinessFail(c, err.Error())
@@ -68,6 +71,7 @@ func (r *RoleApi) PageList(c *gin.Context) {
 	var page request.Page
 	if err := c.ShouldBindQuery(&page); err != nil {
 		response.BusinessFail(c, err.Error())
+		return
 	}
 
 	res, err := services.NewRoleService().PageList(page.PageIndex, page.PageSize)

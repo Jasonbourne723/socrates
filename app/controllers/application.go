@@ -16,6 +16,7 @@ func (p *ApplicationApi) PageList(c *gin.Context) {
 	var page request.Page
 	if err := c.ShouldBindQuery(&page); err != nil {
 		response.BusinessFail(c, err.Error())
+		return
 	}
 
 	res, err := services.NewApplicationService().PageList(page.PageIndex, page.PageSize)
@@ -39,6 +40,7 @@ func (p *ApplicationApi) Create(c *gin.Context) {
 	var req request.CreateApplication
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(req, err))
+		return
 	}
 
 	if res, err := services.NewApplicationService().Create(&req); err != nil {
@@ -52,6 +54,7 @@ func (p *ApplicationApi) Delete(c *gin.Context) {
 	idstr, ok := c.Params.Get("id")
 	if !ok {
 		response.ValidateFail(c, "")
+		return
 	}
 	if id, err := strconv.ParseInt(idstr, 10, 64); err != nil {
 		response.BusinessFail(c, err.Error())
@@ -68,6 +71,7 @@ func (p *ApplicationApi) Update(c *gin.Context) {
 	var req request.UpdateApplication
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(req, err))
+		return
 	}
 
 	if res, err := services.NewApplicationService().Update(&req); err != nil {

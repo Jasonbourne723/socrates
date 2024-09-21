@@ -12,7 +12,6 @@ import (
 type OrganizationApi struct {
 }
 
-
 func (p *OrganizationApi) All(c *gin.Context) {
 
 	res, err := services.NewOrganizationService().All()
@@ -37,6 +36,7 @@ func (p *OrganizationApi) Create(c *gin.Context) {
 	var req request.CreateOrganization
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(req, err))
+		return
 	}
 
 	if res, err := services.NewOrganizationService().Create(&req); err != nil {
@@ -50,6 +50,7 @@ func (p *OrganizationApi) Delete(c *gin.Context) {
 	idstr, ok := c.Params.Get("id")
 	if !ok {
 		response.ValidateFail(c, "")
+		return
 	}
 	if id, err := strconv.ParseInt(idstr, 10, 64); err != nil {
 		response.BusinessFail(c, err.Error())
@@ -66,6 +67,7 @@ func (p *OrganizationApi) Update(c *gin.Context) {
 	var req request.UpdateOrganization
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ValidateFail(c, request.GetErrorMsg(req, err))
+		return
 	}
 
 	if res, err := services.NewOrganizationService().Update(&req); err != nil {

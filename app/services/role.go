@@ -17,14 +17,14 @@ type RoleService struct {
 }
 
 type IRoleSerivce interface {
-	Create(params request.CreaeteRole) (role *response.Role, err error)
+	Create(params request.CreateRole) (role *response.Role, err error)
 	Delete(id int64) (err error)
 	PageList(pageIndex int32, pageSize int32) (pages response.Page[response.Role], err error)
 	Update(params request.UpdateRole) (role *response.Role, err error)
 	List() (rows []response.Role, err error)
 }
 
-func (i *RoleService) Create(params request.CreaeteRole) (role *response.Role, err error) {
+func (i *RoleService) Create(params request.CreateRole) (role *response.Role, err error) {
 
 	existsRole := models.Role{}
 	result := global.App.DB.Where("code = ? ", params.Code).Or("name = ?", params.Name).First(&existsRole)
