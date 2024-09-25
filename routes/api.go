@@ -102,4 +102,14 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 		resourceRouter.GET("/resource/pagelist", resourceApi.PageList)
 		resourceRouter.GET("/resource/:id", resourceApi.GetOne)
 	}
+
+	policyRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
+	{
+		policyApi := &controllers.PolicyApi{}
+		policyRouter.POST("/policy", policyApi.Create)
+		policyRouter.DELETE("/policy/:id", policyApi.Delete)
+		policyRouter.GET("/policy", policyApi.List)
+		policyRouter.PUT("/policy", policyApi.Update)
+		policyRouter.GET("/policy/pagelist", policyApi.PageList)
+	}
 }

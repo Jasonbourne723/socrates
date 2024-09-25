@@ -70,7 +70,6 @@ func (p *ApplicationService) Create(req *request.CreateApplication) (res *respon
 	if result.RowsAffected != 0 {
 		return nil, global.Errors.NameDuplicateError
 	}
-	// todo： appkey/appsecret
 	appKey, _ := utils.GenerateRandomString(8)
 	appSecret, _ := utils.GenerateRandomString(24)
 	entity := models.Application{Name: req.Name, Description: req.Description, CallbackUrl: req.CallbackUrl, AppKey: appKey, AppSecret: appSecret}

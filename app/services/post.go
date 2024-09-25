@@ -75,7 +75,6 @@ func (p *PostService) List() (list []*response.Post, err error) {
 		entity := MapToPostResponse(&Posts[i], organizationIds)
 		list = append(list, entity)
 	}
-	//todo: organization_post
 	return
 }
 
@@ -90,7 +89,6 @@ func (p *PostService) Create(req *request.CreatePost) (res *response.Post, err e
 		}
 	}
 	entity := models.Post{Name: req.Name, Code: req.Code}
-	//todo: organization_post
 	err = global.App.DB.Create(&entity).Error
 	if req.OrganizationIds != nil && len(req.OrganizationIds) > 0 {
 		organizationPosts := []models.PostOrganization{}
