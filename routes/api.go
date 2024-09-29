@@ -21,6 +21,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 	{
 		unauthRouter.POST("/auth/register", authApi.Register)
 		unauthRouter.POST("/auth/login", authApi.Login)
+		unauthRouter.POST("/auth/github_login", authApi.GithubLogin)
 	}
 
 	authRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())

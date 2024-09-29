@@ -38,7 +38,19 @@ func (userService *userService) Register(params request.Register) (err error, us
 		err = errors.New("手机号已存在")
 		return
 	}
-	user = models.User{Name: params.Name, Mobile: params.Mobile, Password: utils.BcryptMake([]byte(params.Password))}
+	user = models.User{Name: params.Name, Mobile: params.Mobile, Password: utils.BcryptMake([]byte(params.Password)), Avatar: ""}
+	err = global.App.DB.Create(&user).Error
+	return
+}
+
+func (userService *userService) RegisterByGitHub(params response.GitHubUser) (user models.User, err error) {
+
+	user = models.User{}
+	var result = global.App.DB.Where("github_openid = ?", params.ID).Select("id").First(&user)
+	if result.RowsAffected != 0 {
+		return
+	}
+	user = models.User{Name: params.Name, Mobile: "", Password: "", GithubOpenid: params.ID, Avatar: params.AvatarURL}
 	err = global.App.DB.Create(&user).Error
 	return
 }

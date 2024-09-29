@@ -28,6 +28,16 @@ func (login Login) GetMessages() ValidatorMessages {
 	}
 }
 
+type GithubLogin struct {
+	Code string `form:"code" json:"code" binding:"required"`
+}
+
+func (login GithubLogin) GetMessages() ValidatorMessages {
+	return ValidatorMessages{
+		"code.required": "授权码不能为空",
+	}
+}
+
 type CreateUser struct {
 	Name           string  `form:"name" json:"name" binding:"required"`
 	Mobile         string  `form:"mobile" json:"mobile" binding:"required,mobile"`

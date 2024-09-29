@@ -23,3 +23,27 @@ func (dto UpdateApplication) GetMessages() ValidatorMessages {
 		"id.required":   "id不能为空",
 	}
 }
+
+type CreateSsoApplication struct {
+	Name        string `form:"name" json:"name" binding:"required"`
+	Description string `form:"description" json:"description"`
+	CallbackUrl string `form:"description" json:"callback_url" `
+}
+
+func (dto CreateSsoApplication) GetMessages() ValidatorMessages {
+	return ValidatorMessages{
+		"name.required": "名称不能为空",
+	}
+}
+
+type UpdateSsoApplication struct {
+	Id int64 `form:"id" json:"id"`
+	CreateApplication
+}
+
+func (dto UpdateSsoApplication) GetMessages() ValidatorMessages {
+	return ValidatorMessages{
+		"name.required": "名称不能为空",
+		"id.required":   "id不能为空",
+	}
+}
