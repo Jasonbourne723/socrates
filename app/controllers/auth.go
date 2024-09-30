@@ -15,6 +15,11 @@ import (
 )
 
 type AuthApi struct {
+	userService services.IUserService
+}
+
+func NewAuthApi(userService services.IUserService) AuthApi {
+	return AuthApi{userService: userService}
 }
 
 func (a *AuthApi) Register(c *gin.Context) {
@@ -43,7 +48,7 @@ func (a *AuthApi) Login(c *gin.Context) {
 		return
 	}
 
-	if err, user := services.UserService.Login(form); err != nil {
+	if err, user := a.userService.Login(form); err != nil {
 		response.BusinessFail(c, err.Error())
 	} else {
 		tokenData, err, _ := services.JwtService.CreateToken(services.AppGuardName, user)

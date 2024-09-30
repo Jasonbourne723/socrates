@@ -5,6 +5,7 @@ import (
 	"github.com/Jasonbourne723/socrates/app/controllers/common"
 	"github.com/Jasonbourne723/socrates/app/middleware"
 	"github.com/Jasonbourne723/socrates/app/services"
+	"github.com/Jasonbourne723/socrates/inject"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +20,11 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 
 	unauthRouter := router.Group("").Use(middleware.Cors())
 	{
+
+		api := inject.InitializeAuthApi()
+
 		unauthRouter.POST("/auth/register", authApi.Register)
-		unauthRouter.POST("/auth/login", authApi.Login)
+		unauthRouter.POST("/auth/login", api.Login)
 		unauthRouter.POST("/auth/github_login", authApi.GithubLogin)
 	}
 

@@ -23,6 +23,10 @@ type IUserService interface {
 	Create(req *request.CreateUser) (res *response.User, err error)
 	Update(req *request.UpdateUser) (res *response.User, err error)
 	Delete(id int64) (err error)
+
+	Register(params request.Register) (err error, user models.User)
+	Login(params request.Login) (err error, user *models.User)
+	GetUserInfo(id string) (err error, user models.User)
 }
 
 func NewUserService() IUserService {
