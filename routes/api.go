@@ -27,7 +27,7 @@ func SetApiGroupRoutes(router *gin.RouterGroup) {
 	authRouter := router.Group("").Use(middleware.JWTAuth(services.AppGuardName)).Use(middleware.Cors())
 	{
 
-		authRouter.POST("/auth/info", authApi.Info)
+		authRouter.GET("/auth/info", authApi.Info)
 		authRouter.POST("/auth/logout", authApi.Logout)
 		authRouter.POST("/image_upload", common.ImageUpload)
 	}
