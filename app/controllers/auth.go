@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/Jasonbourne723/socrates/app/common/request"
@@ -114,25 +113,34 @@ func (a *AuthApi) GithubLogin(c *gin.Context) {
 
 func getGitHubAccessToken(uri string) (token string, err error) {
 
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("GitHub 访问失败: %v", r)
+		}
+	}()
+
 	client := &http.Client{}
 
 	req, err := http.NewRequest("POST", uri, bytes.NewBuffer([]byte{}))
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		err = fmt.Errorf("error creating request: %v", err)
+		return
 	}
 	req.Header.Set("Accept", "application/json")
 
 	// 发送请求
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("Error sending request: %v", err)
+		err = fmt.Errorf("error  sending request:: %v", err)
+		return
 	}
 	defer resp.Body.Close()
 
 	// 读取响应
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response: %v", err)
+		err = fmt.Errorf("error reading request: %v", err)
+		return
 	}
 
 	githubToken := response.GitHubToken{}
@@ -146,11 +154,19 @@ func getGitHubAccessToken(uri string) (token string, err error) {
 }
 
 func getGitHubUserInfo(token string) (user response.GitHubUser, err error) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("GitHub 访问失败: %v", r)
+		}
+	}()
+
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", "https://api.github.com/user", bytes.NewBuffer([]byte{}))
 	if err != nil {
-		log.Fatalf("Error creating request: %v", err)
+		err = fmt.Errorf("error creating request: %v", err)
+		return
 	}
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Authorization", "bearer "+token)
