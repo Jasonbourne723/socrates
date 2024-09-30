@@ -127,7 +127,8 @@ func (p *policyService) Delete(id int64) (err error) {
 
 func MapToPolicyResponse(m *models.Policy) *response.Policy {
 	return &response.Policy{
-		Id:   m.Id,
-		Name: m.Name,
+		Id:          m.Id,
+		Name:        m.Name,
+		Description: m.Description,
 	}
 }
