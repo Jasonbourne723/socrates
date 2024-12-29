@@ -73,7 +73,12 @@ func (p *PermissionSpaceService) Create(req *request.CreatePermissionSpace) (res
 		}
 	}
 
-	entity := models.PermissionSpace{Name: req.Name, Code: req.Code, Description: req.Description}
+	entity := models.PermissionSpace{
+		Name:          req.Name,
+		Code:          req.Code,
+		Description:   req.Description,
+		ApplicationId: req.ApplicationId,
+	}
 	err = global.App.DB.Create(&entity).Error
 	res = MapToPermissionSpaceResponse(&entity)
 	return
@@ -93,6 +98,7 @@ func (p *PermissionSpaceService) Update(req *request.UpdatePermissionSpace) (res
 	exists.Code = req.Code
 	exists.Name = req.Name
 	exists.Description = req.Description
+	exists.ApplicationId = req.ApplicationId
 
 	err = global.App.DB.Save(&exists).Error
 	if err != nil {
@@ -109,9 +115,10 @@ func (p *PermissionSpaceService) Delete(id int64) (err error) {
 
 func MapToPermissionSpaceResponse(m *models.PermissionSpace) *response.PermissionSpace {
 	return &response.PermissionSpace{
-		Id:          m.Id,
-		Name:        m.Name,
-		Code:        m.Code,
-		Description: m.Description,
+		Id:            m.Id,
+		Name:          m.Name,
+		Code:          m.Code,
+		Description:   m.Description,
+		ApplicationId: m.ApplicationId,
 	}
 }

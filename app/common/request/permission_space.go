@@ -1,16 +1,18 @@
 package request
 
 type CreatePermissionSpace struct {
-	Name        string `form:"name" json:"name" binding:"required"`
-	Code        string `form:"code" json:"code" binding:"required"`
-	Description string `form:"description" json:"description" binding:"required"`
+	Name          string `form:"name" json:"name" binding:"required"`
+	ApplicationId int64  `form:"application_id" json:"application_id" binding:"required"`
+	Code          string `form:"code" json:"code" binding:"required"`
+	Description   string `form:"description" json:"description" binding:"required"`
 }
 
 func (dto CreatePermissionSpace) GetMessages() ValidatorMessages {
 	return ValidatorMessages{
-		"name.required":        "名称不能为空",
-		"code.required":        "编号不能为空",
-		"description.required": "描述不能为空",
+		"name.required":           "名称不能为空",
+		"code.required":           "编号不能为空",
+		"description.required":    "描述不能为空",
+		"application_id.required": "应用ID不能为空",
 	}
 }
 
@@ -21,9 +23,10 @@ type UpdatePermissionSpace struct {
 
 func (dto UpdatePermissionSpace) GetMessages() ValidatorMessages {
 	return ValidatorMessages{
-		"name.required":        "名称不能为空",
-		"code.required":        "编号不能为空",
-		"description.required": "描述不能为空",
-		"id.required":          "ID不能为空",
+		"name.required":           "名称不能为空",
+		"code.required":           "编号不能为空",
+		"description.required":    "描述不能为空",
+		"id.required":             "ID不能为空",
+		"application_id.required": "应用ID不能为空",
 	}
 }
